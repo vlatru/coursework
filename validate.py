@@ -11,6 +11,6 @@ workdir = dirs[ord(username[0])]
 
 for dirname in dirs:
     if dirname == workdir:
-        return
+        break
     if len(os.listdir(os.path.join(curr_dir, dirname))) > 1:
         raise Error("Not yours work")
