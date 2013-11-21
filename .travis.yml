@@ -1,10 +1,10 @@
 language: python
 python: 
-    - "2.7"
+  - "2.7"
 install:
-    - pip install pep8
+  - pip install pep8
 before_script:
-    - "pep8 --exclude=migrations --ignore=E501,E225 ./"
-    - python validate.py
+  - "pep8 --exclude=migrations --ignore=E501,E225 ./"
+  - python validate.py
 script:
-    - python test.py
+  - python test.py
