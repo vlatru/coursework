@@ -5,9 +5,11 @@ import os
 curr_dir = os.environ['TRAVIS_BUILD_DIR']
 username = os.path.basename(os.path.dirname(curr_dir))
 
+print username
+
 dirs = ['1_poll', '2_quiz', '3_gallery']
 
-workdir = dirs[ord(username[0])]
+workdir = dirs[ord(username[0]) % 3]
 
 for dirname in dirs:
     if dirname == workdir:
