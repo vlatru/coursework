@@ -4,6 +4,7 @@ python:
 install:
   - pip install pep8
 before_script:
+  - python validate.py
   - "pep8 --exclude=migrations --ignore=E501,E225 ./"
 script:
   - python test.py
