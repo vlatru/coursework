@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title>Статистика</title>
+  <link rel="stylesheet" type="text/css" href="/static/css/st.css" />
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+  <script type="text/javascript" src="/static/js/highcharts.js"></script>
+  <script type="text/javascript" src="/static/js/exporting.js"></script>
+</head>
+<body>
+  <div id="container" class="stats">
+    <script type="text/javascript"> 
+      var colors = Highcharts.getOptions().colors,
+          categories = [], //['Утро', 'День', 'Вечер', 'Ночь'], /////////
+          name = 'Статы', /////////
+//          data = [{ y: 55.11, color: colors[0] },
+//            { y: 21.63, color: colors[1] },
+//            { y: 11.94, color: colors[2] },
+//            { y: 7.15, color: colors[3] }];
+          data = [],
+          sum = 0;
+      {% for ans in que.answer_set.all %}
+      sum += {{ ans.freq }};
+      {% endfor %}
+      sum /= 100;
+      {% for ans in que.answer_set.all %}
+      data[{{ forloop.counter }}-1] = { y: Math.round({{ ans.freq }} / sum), color: colors[{{ forloop.counter }}-1] };
+      categories[{{ forloop.counter }}-1] = '{{ ans }}';
+      {% endfor %}
+      
+      function setChart(name, categories, data, color) { 
+        chart.xAxis[0].setCategories(categories, false);
+        chart.series[0].remove(false);
+        chart.addSeries({ 
+          name: name,
+          data: data,
+          color: color || 'red' 
+        }, false);
+        chart.redraw(); 
+      }
+
+      var chart = $('#container').highcharts({ 
+        chart: { type: 'column' },
+        title: { text: '{{ que }}' }, ///////////////////////////
+        subtitle: { text: 'drilldown chart' },
+        xAxis: { categories: categories },
+        yAxis: { title: { text: '% проголосовавших' } },
+        plotOptions: { 
+          column: { 
+            cursor: 'pointer',
+            point: { 
+              events: { 
+                click: function () { 
+                  var drilldown = this.drilldown;
+                  if (drilldown) { // drill down
+                    setChart(drilldown.name, drilldown.categories, drilldown.data, drilldown.color); 
+                  } else { // restore
+                    setChart(name, categories, data); 
+                  } 
+                } 
+              } 
+            },
+
+            dataLabels: { 
+              enabled: true,
+              color: colors[0],
+              style: { 
+                fontWeight: 'bold' 
+              },
+              formatter: function () { 
+                return this.y + '%'; 
+              } 
+            } 
+          } 
+        },
+        tooltip: { 
+          formatter: function () { 
+            var point = this.point,
+                s = this.x + ':<b> ' + this.y + ' % от общего числа проголосовавших</b><br />'; //////////
+            if (point.drilldown) { 
+              s += 'Кликни, чтобы увидеть подробности ' + point.category; ///////////
+            } else { 
+              s += 'Кликни, чтобы вернутся в начало'; ///////////
+            }
+            return s; 
+          } 
+        },
+        series: [{ 
+          name: name,
+          data: data,
+          color: 'red' 
+        }],
+        exporting: { 
+          enabled: false 
+        } 
+      })
+      .highcharts(); // return chart 
+    </script>
+
+    <a id="url" href="/quiz/{{ que.id }}">Обратно к опроснику</a>
+  </div>
+</body>
+</html>
+
+

@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title>Опросник</title>
+  <link rel="stylesheet" type="text/css" href="/static/css/st.css" />
+</head>
+<body>
+  <div id="q1" class="list">
+    <!--https://docs.djangoproject.com/en/dev/intro/tutorial04/-->
+    <h5>{{ que }}</h5>
+    {% if err == 1 %}<h6 style="color:red">Выбери ответ!</h6>{% endif %}
+    <form action="/quiz/{{ que.id }}/" method="POST">
+    {% csrf_token %}
+    {% for ans in que.answer_set.all %}
+      <input id="ans{{ forloop.counter }}" type="radio" name="choice" value="{{ ans.id }}" />
+      <label for="ans{{ forloop.counter }}">{{ ans }}</label>
+      <br />
+    {% endfor %}
+    <input id="sub" type="submit" value="Ответить" />
+    <hr />
+    </form>
+  </div>
+</body>
+</html>

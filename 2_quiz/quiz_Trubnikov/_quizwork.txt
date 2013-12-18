@@ -1,0 +1,15 @@
+sudo -i
+workon bart
+
+mount -t vboxsf vbox_share /media/share
+
+django-admin.py startproject quiz
+chmod a+x manage.py
+
+pep8 --exclude=migrations .
+
+./manage.py syncdb
+./manage.py schemamigration quiz --initial
+./manage.py migrate quiz
+
+./manage.py runserver
